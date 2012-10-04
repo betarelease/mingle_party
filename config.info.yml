@@ -1,0 +1,6 @@
+- name: 'MingleParty'
+  git: 'git://github.com/betarelease/mingle_party.git'
+  host: 'mingle_hostname'
+  username: 'your_username_here'
+  password: 'your_password_here'
+  project: 'mingle_test_project'
