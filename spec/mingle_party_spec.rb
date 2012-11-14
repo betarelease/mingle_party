@@ -13,9 +13,13 @@ describe MingleParty do
 
   it "change card status to done" do
     mingle = MingleParty.new
-    card = mingle.change_card_status(11, "done")
+    response = mingle.create_card('card status change test', 'card')
+    card_number = response['location'].split("/").last.split(".").first
+    card = mingle.fetch_card(card_number)
 
-    card['card']['name'].should =~ /Implement the SiriMingle Feature/
+    card = mingle.change_card_status(card['card']['number'], "done")
+
+    card['card']['name'].should =~ /card status change test/
     card['card']['properties'].first['value'].should =~ /done/
   end
 
@@ -28,8 +32,11 @@ describe MingleParty do
   
   it "create a card" do
     mingle = MingleParty.new
-    card = mingle.create_card('black jack', 'bug')
+    response = mingle.create_card('black jack', 'card')
+    card_number = response['location'].split("/").last.split(".").first
+    card = mingle.fetch_card(card_number)
     
-    card.should_not be_nil
+    card.should_not be_nil    
+    card['card']['name'].should =~ /black jack/
   end
 end
