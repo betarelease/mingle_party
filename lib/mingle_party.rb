@@ -31,4 +31,23 @@ class MingleParty
     response = self.class.post( "#{@uri}/murmurs.xml", options )
   end
   
+  def create_user(user)
+    options = @auth_options.merge({ query: { 'user[name]' =>  user[:name], 'user[login]' => user[:login], 
+                                             'user[email]' => user[:email], 'user[admin]' => user[:admin],
+                                             'user[password]' => user[:password], 
+                                             'user[password_confirmation]' => user[:password_confirmation]} })                                      
+    self.class.post("#{@uri}/users.xml", options)
+  end
+  
+  def fetch_users
+    response = self.class.get( "#{@uri}/users.xml", @auth_options )
+    puts "[DEBUG] response => #{response.inspect}"
+    
+    Crack::XML.parse( response.body )
+  end
+  
+  def fetch_user(id)
+    response = self.class.get( "#{@uri}/users/#{id}.xml", @auth_options )
+    Crack::XML.parse( response.body )
+  end
 end

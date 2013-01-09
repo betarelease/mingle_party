@@ -4,6 +4,9 @@ describe MingleParty do
   
   it "find card" do
     mingle = MingleParty.new
+    response = mingle.create_card('card status change test', 'card')
+    puts "[DEBUG] response => #{response.inspect}"
+    
     card = mingle.fetch_card(13)
 
     card['card']['properties'].first['value'].should =~ /Just started/
@@ -38,5 +41,38 @@ describe MingleParty do
     
     card.should_not be_nil    
     card['card']['name'].should =~ /black jack/
+  end
+  
+  it "create an admin user" do
+    mingle = MingleParty.new
+    user = { :name => "jsmith", 
+             :login => "johnsmithcom", 
+             :email => "john@smith.com", 
+             :password => "abcd1234", 
+             :password_confirmation => "abcd1234", 
+             :admin => "false" }
+    response = mingle.create_user(user)
+    response.should be_success
+  end
+
+  it "create a system user" do
+    mingle = MingleParty.new
+    user = { :name => "jsystem", 
+             :login => "john@system.com", 
+             :email => "john@system.com", 
+             :password => "abcd1234", 
+             :password_confirmation => "abcd1234", 
+             :admin => "false", 
+             :system => "true" }
+    response = mingle.create_user(user)
+    response.should be_success
+  end
+
+  it "fetch users" do
+    mingle = MingleParty.new
+
+    response = mingle.fetch_users
+    users = response['projects_members']
+    users.should_not be_empty
   end
 end
