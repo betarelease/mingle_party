@@ -6,7 +6,7 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => :build
 
-task :build => :spec do
+task :build  do
   system "gem build mingle_party.gemspec"
 end
  
