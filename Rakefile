@@ -6,10 +6,10 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => :build
 
-task :build  do
+task :build do
   system "gem build mingle_party.gemspec"
 end
  
 task :release => :build do
-  system "gem push mingle_party-0.0.2"
+  system "gem push mingle_party-0.0.3"
 end
