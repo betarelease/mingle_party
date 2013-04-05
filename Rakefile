@@ -11,5 +11,5 @@ task :build do
 end
  
 task :release => :build do
-  system "gem push mingle_party-0.0.4.gem"
+  system "gem push mingle_party"
 end
