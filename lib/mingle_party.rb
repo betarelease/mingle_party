@@ -43,6 +43,10 @@ class MingleParty
     response.each {|key, value| puts "#{key}" }
   end
 =end
+  def murmurs
+    response = self.class.get( "#{@uri}/murmurs.xml", @auth_options )
+    Crack::XML.parse( response.body )["murmurs"]
+  end
 
   def murmur(message, command)
     options = @auth_options.merge( { query:  { "#{command}".to_sym =>  message } } )

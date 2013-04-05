@@ -6,12 +6,9 @@ describe MingleParty do
   it "find card" do
     response = mingle.create_card('card status change test', 'card')
 
-    card = mingle.fetch_cards
-
-    card.should include_json('Just started')
-    card['card']['properties'].first['value'].should =~ /Just started/
-    card['card']['name'].should =~ /card 13/
-    card['card']['description'].should == "I love Siri and So should you."
+    cards = mingle.fetch_cards
+    cards.first["name"].should == "card 2"
+    cards.last["name"].should == "card 1"
   end
 
   it "change card status to done" do
@@ -25,10 +22,14 @@ describe MingleParty do
     card['card']['properties'].first['value'].should =~ /done/
   end
 
-  it "murmur about its happiness" do
-    murmur = mingle.murmur('happy to mingle xoxo siri', 'murmur[body]')
+  it "murmurs about its happiness" do
+    murmurs = mingle.murmurs
+    murmurs.first["body"].should =~ /test murmur/
+  end
 
-    murmur['murmur']['body'].should =~ /happy to mingle/
+  it "shows all murmurs" do
+    murmurs = mingle.murmurs
+    murmurs.should_not be_empty
   end
 
   it "create a card" do
