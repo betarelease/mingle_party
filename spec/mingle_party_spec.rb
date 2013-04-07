@@ -4,38 +4,42 @@ describe MingleParty do
   let(:mingle) {MingleParty.new}
 
   it "find card" do
-    response = mingle.create_card('card status change test', 'card')
+    response = mingle.create_card('find this card', 'card')
 
-    cards = mingle.fetch_cards
-    cards.first["name"].should == "card 2"
-    cards.last["name"].should == "card 1"
+    cards = mingle.cards
+    cards.first["name"].should == "find this card"
   end
 
   it "change card status to done" do
     response = mingle.create_card('card status change test', 'card')
     card_number = response['location'].split("/").last.split(".").first
-    card = mingle.fetch_card(card_number)
+    card = mingle.card(card_number)
 
     card = mingle.change_card_status(card['card']['number'], "done")
-
+    
     card['card']['name'].should =~ /card status change test/
     card['card']['properties'].first['value'].should =~ /done/
   end
 
-  it "murmurs about its happiness" do
+  it "murmurs a message" do
+    message = "test murmur spec"
+    mingle.murmur(message)
     murmurs = mingle.murmurs
-    murmurs.first["body"].should =~ /test murmur/
+    murmur = murmurs.detect do |m|
+      m["body"] =~ /test murmur spec/
+    end
+    murmur["body"].should =~ /test murmur spec/
   end
 
   it "shows all murmurs" do
-    murmurs = mingle.murmurs
+    murmurs = mingle.murmurs    
     murmurs.should_not be_empty
   end
 
   it "create a card" do
     response = mingle.create_card('black jack', 'card')
     card_number = response['location'].split("/").last.split(".").first
-    card = mingle.fetch_card(card_number)
+    card = mingle.card(card_number)
 
     card.should_not be_nil
     card['card']['name'].should =~ /black jack/
@@ -65,7 +69,7 @@ describe MingleParty do
   end
 
   it "fetch users" do
-    response = mingle.fetch_users
+    response = mingle.users
     users = response['projects_members']
     users.should_not be_empty
   end

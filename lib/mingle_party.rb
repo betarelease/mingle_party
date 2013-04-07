@@ -22,13 +22,31 @@ class MingleParty
     response = self.class.put( "#{@uri}/cards/#{number}.xml", options )
   end
 
-  def fetch_card(number)
+  def card(number)
     response = self.class.get( "#{@uri}/cards/#{number}.xml", @auth_options )
     Crack::XML.parse( response.body )
   end
 
-  def fetch_cards
+  def cards
     response = self.class.get( "#{@uri}/cards.xml", @auth_options )
+    Crack::XML.parse( response.body )["cards"]
+  end
+
+  def create_user(user)
+    options = @auth_options.merge({ query: { 'user[name]' =>  user[:name], 'user[login]' => user[:login],
+                                      'user[email]' => user[:email], 'user[admin]' => user[:admin],
+                                      'user[password]' => user[:password],
+                                      'user[password_confirmation]' => user[:password_confirmation]} })
+    self.class.post("#{@uri}/users.xml", options)
+  end
+
+  def users
+    response = self.class.get( "#{@uri}/users.xml", @auth_options )
+    Crack::XML.parse( response.body )
+  end
+
+  def user(id)
+    response = self.class.get( "#{@uri}/users/#{id}.xml", @auth_options )
     Crack::XML.parse( response.body )
   end
 
@@ -48,26 +66,8 @@ class MingleParty
     Crack::XML.parse( response.body )["murmurs"]
   end
 
-  def murmur(message, command)
-    options = @auth_options.merge( { query:  { "#{command}".to_sym =>  message } } )
+  def murmur(message)
+    options = @auth_options.merge( { query:  { "murmur[body]" =>  message } } )
     response = self.class.post( "#{@uri}/murmurs.xml", options )
-  end
-
-  def create_user(user)
-    options = @auth_options.merge({ query: { 'user[name]' =>  user[:name], 'user[login]' => user[:login],
-                                      'user[email]' => user[:email], 'user[admin]' => user[:admin],
-                                      'user[password]' => user[:password],
-                                      'user[password_confirmation]' => user[:password_confirmation]} })
-    self.class.post("#{@uri}/users.xml", options)
-  end
-
-  def fetch_users
-    response = self.class.get( "#{@uri}/users.xml", @auth_options )
-    Crack::XML.parse( response.body )
-  end
-
-  def fetch_user(id)
-    response = self.class.get( "#{@uri}/users/#{id}.xml", @auth_options )
-    Crack::XML.parse( response.body )
   end
 end
