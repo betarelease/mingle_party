@@ -4,7 +4,11 @@ require 'bundler/setup'
 require 'yaml'
 require 'crack'
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'mingle_party') )
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'cards'
+require 'murmurs'
+require 'users'
+require 'mingle_party'
 
 RSpec.configure do |config|
   # some (optional) config here

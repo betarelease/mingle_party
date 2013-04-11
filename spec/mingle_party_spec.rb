@@ -69,12 +69,7 @@ describe MingleParty do
   end
 
   it "fetch users" do
-    response = mingle.users
-    users = response['projects_members']
+    users = mingle.users
     users.should_not be_empty
-  end
-
-  it "fetches all the cards" do
-
   end
 end
