@@ -6,9 +6,9 @@ class MingleParty
   include HTTParty
 
   def initialize
-    config = YAML.load(File.read("./config.yml")).first
-    @uri = "#{config['host']}/api/v2/projects/#{config['project']}"
-    auth = { username: config['username'], password: config['password'] }
+    @config = YAML.load(File.read("./config.yml")).first
+    @uri = "#{@config['host']}/api/v2/projects/#{@config['project']}"
+    auth = { username: @config['username'], password: @config['password'] }
     @auth_options = { :basic_auth => auth }
   end
 
@@ -32,17 +32,6 @@ class MingleParty
     Crack::XML.parse( response.body )
   end
 
-=begin
-  def delete_card(number)
-    self.class.delete( "#{@uri}/cards/#{number}")
-  end
-
-  def delete_cards
-    response = fetch_cards
-    response['cards'].each{|card| delete_card(card['number'].to_i)}
-    response.each {|key, value| puts "#{key}" }
-  end
-=end
   def murmurs
     response = self.class.get( "#{@uri}/murmurs.xml", @auth_options )
     Crack::XML.parse( response.body )["murmurs"]
@@ -70,4 +59,14 @@ class MingleParty
     response = self.class.get( "#{@uri}/users/#{id}.xml", @auth_options )
     Crack::XML.parse( response.body )
   end
+  
+  def attachments(card_number)
+    response = self.class.get( "#{@uri}/cards/#{card_number}/attachments.xml", @auth_options )
+    Crack::XML.parse( response.body )
+  end
+
+  def attachment(url)
+    response = self.class.get( "#{@config['host']}/#{url}", @auth_options )
+  end
+
 end

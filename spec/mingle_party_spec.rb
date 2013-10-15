@@ -70,7 +70,26 @@ describe MingleParty do
     users.should_not be_empty
   end
 
-  it "fetches all the cards" do
-
+  it "fetches a list of attachments" do
+    card_number = 132
+    response = mingle.attachments(card_number)
+    attachments = response['attachments']
+    
+    attachments.should_not be_empty
+    attachments.size.should == 3
   end
+  
+  it "fetches the first attachment from url" do
+    card_number = 132
+    response = mingle.attachments(card_number)
+    attachments = response['attachments']
+    
+    response = mingle.attachment(attachments.last["url"])
+    image_file = File.open("attachment_received.jpg", "w+")
+    image_file << response
+    image_file.close
+    
+    File.stat("attachment_received.jpg").should_not be_zero
+  end
+  
 end
