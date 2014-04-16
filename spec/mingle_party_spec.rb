@@ -5,7 +5,6 @@ describe MingleParty do
 
   it "find card" do
     response = mingle.create_card('find this card', 'card')
-
     cards = mingle.cards
     cards.first["name"].should == "find this card"
   end
@@ -16,7 +15,7 @@ describe MingleParty do
     card = mingle.card(card_number)
 
     card = mingle.change_card_status(card['card']['number'], "done")
-    
+
     card['card']['name'].should =~ /card status change test/
     card['card']['properties'].first['value'].should =~ /done/
   end
@@ -32,7 +31,7 @@ describe MingleParty do
   end
 
   it "shows all murmurs" do
-    murmurs = mingle.murmurs    
+    murmurs = mingle.murmurs
     murmurs.should_not be_empty
   end
 
@@ -71,5 +70,27 @@ describe MingleParty do
   it "fetch users" do
     users = mingle.users
     users.should_not be_empty
+  end
+
+  it "fetches a list of attachments" do
+    card_number = 132
+    response = mingle.attachments(card_number)
+    attachments = response['attachments']
+
+    attachments.should_not be_empty
+    attachments.size.should == 3
+  end
+
+  it "fetches the first attachment from url" do
+    card_number = 132
+    response = mingle.attachments(card_number)
+    attachments = response['attachments']
+
+    response = mingle.attachment(attachments.last["url"])
+    image_file = File.open("attachment_received.jpg", "w+")
+    image_file << response
+    image_file.close
+
+    File.stat("attachment_received.jpg").should_not be_zero
   end
 end
