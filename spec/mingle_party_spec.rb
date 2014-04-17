@@ -1,44 +1,46 @@
 require 'spec_helper'
 
-describe MingleParty do
-  let(:mingle) {MingleParty.new}
+describe HttpApi do
 
   describe "projects" do
     it "lists all projects" do
-      projects = mingle.projects
+      projects = Projects.new
       project_names = projects.map { |p|  p['name']}
       project_names.include? "test project"
     end
 
     it "lists all events for a project" do
       project_identifier = "test_project"
-      events = mingle.events_for(project_identifier)
+      events = Projects.new.events_for(project_identifier)
       puts events.inspect
     end
   end
 
   describe "cards" do
     it "create a card" do
-      response = mingle.create_card('black jack', 'card')
+      cards = Cards.new
+      response = cards.create('black jack', 'card')
       card_number = response['location'].split("/").last.split(".").first
-      card = mingle.card(card_number)
+      card = cards.find(card_number)
 
       card.should_not be_nil
       card['card']['name'].should =~ /black jack/
     end
 
     it "find card" do
-      response = mingle.create_card('find this card', 'card')
-      cards = mingle.cards
-      cards.first["name"].should == "find this card"
+      cards = Cards.new
+      response = cards.create('find this card', 'card')
+
+      cards.all.first["name"].should == "find this card"
     end
 
     it "change card status to done" do
-      response = mingle.create_card('card status change test', 'card')
+      cards = Cards.new
+      response = cards.create('card status change test', 'card')
       card_number = response['location'].split("/").last.split(".").first
-      card = mingle.card(card_number)
+      card = cards.find(card_number)
 
-      card = mingle.change_card_status(card['card']['number'], "done")
+      card = cards.change_status(card['card']['number'], "done")
 
       card['card']['name'].should =~ /card status change test/
       card['card']['properties'].first['value'].should =~ /done/
@@ -47,18 +49,20 @@ describe MingleParty do
 
   describe "murmurs" do
     it "murmurs a message" do
+      murmurs = Murmurs.new
       message = "test murmur spec"
-      mingle.murmur(message)
-      murmurs = mingle.murmurs
-      murmur = murmurs.detect do |m|
+      murmurs.mutter(message)
+
+      murmur = murmurs.all.detect do |m|
         m["body"] =~ /test murmur spec/
       end
+
       murmur["body"].should =~ /test murmur spec/
     end
 
     it "shows all murmurs" do
-      murmurs = mingle.murmurs
-      murmurs.should_not be_empty
+      murmurs = Murmurs.new
+      murmurs.all.should_not be_empty
     end
   end
 
@@ -70,7 +74,8 @@ describe MingleParty do
                :password => "abcd1234",
                :password_confirmation => "abcd1234",
                :admin => "false" }
-      response = mingle.create_user(user)
+      users = Users.new
+      response = users.create(user)
       response.should be_success
     end
 
@@ -82,13 +87,14 @@ describe MingleParty do
                :password_confirmation => "abcd1234",
                :admin => "false",
                :system => "true" }
-      response = mingle.create_user(user)
+      users = Users.new
+      response = users.create(user)
       response.should be_success
     end
 
     it "fetch users" do
-      users = mingle.users
-      users.should_not be_empty
+      users = Users.new
+      users.all.should_not be_empty
     end
   end
 

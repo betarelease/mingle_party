@@ -1,13 +1,18 @@
-module Murmurs
+class Murmurs
+  include HttpApi
 
-  def murmurs
-    response = self.class.get( "#{@uri}/murmurs.xml", @auth_options )
+  def initialize
+    @uri, @auth_options = setup
+  end
+
+  def all
+    response = HTTParty.get( "#{@uri}/murmurs.xml", @auth_options )
     Crack::XML.parse( response.body )["murmurs"]
   end
 
-  def murmur(message)
+  def mutter(message)
     options = @auth_options.merge( { query:  { "murmur[body]" =>  message } } )
-    response = self.class.post( "#{@uri}/murmurs.xml", options )
+    response = HTTParty.post( "#{@uri}/murmurs.xml", options )
   end
-  
+
 end
