@@ -5,6 +5,7 @@ require 'rexml/document'
 require 'cards'
 require 'murmurs'
 require 'users'
+require 'projects'
 
 class MingleParty
   include HTTParty
@@ -12,6 +13,7 @@ class MingleParty
   include Cards
   include Murmurs
   include Users
+  include Projects
 
   def initialize
     @config = YAML.load(File.read("./config.yml")).first
