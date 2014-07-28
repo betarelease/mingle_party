@@ -6,13 +6,13 @@ describe HttpApi do
     it "lists all projects" do
       projects = Projects.new
       project_names = projects.map { |p|  p['name']}
-      project_names.include? "test project"
+      expect(project_names).to include("test project")
     end
 
     it "lists all events for a project" do
       project_identifier = "test_project"
       events = Projects.new.events_for(project_identifier)
-      puts events.inspect
+      expect(events).to_not be_empty
     end
   end
 
@@ -24,14 +24,14 @@ describe HttpApi do
       card = cards.find(card_number)
 
       card.should_not be_nil
-      card['card']['name'].should =~ /black jack/
+      expect(card['card']['name']).to match(/black jack/)
     end
 
     it "find card" do
       cards = Cards.new
       response = cards.create('find this card', 'card')
 
-      cards.all.first["name"].should == "find this card"
+      expect(cards.all.first["name"]).to eq("find this card")
     end
 
     it "change card status to done" do
@@ -42,8 +42,8 @@ describe HttpApi do
 
       card = cards.change_status(card['card']['number'], "done")
 
-      card['card']['name'].should =~ /card status change test/
-      card['card']['properties'].first['value'].should =~ /done/
+      expect(card['card']['name']).to match(/card status change test/)
+      expect(card['card']['properties'].first['value']).to match(/done/)
     end
   end
 
@@ -54,15 +54,15 @@ describe HttpApi do
       murmurs.mutter(message)
 
       murmur = murmurs.all.detect do |m|
-        m["body"] =~ /test murmur spec/
+        expect(m["body"]).to match(/test murmur spec/)
       end
 
-      murmur["body"].should =~ /test murmur spec/
+      expect(murmur["body"]).to match(/test murmur spec/)
     end
 
     it "shows all murmurs" do
       murmurs = Murmurs.new
-      murmurs.all.should_not be_empty
+      expect(murmurs.all).to_not be_empty
     end
   end
 
@@ -76,7 +76,7 @@ describe HttpApi do
                :admin => "false" }
       users = Users.new
       response = users.create(user)
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "create a system user" do
@@ -89,36 +89,20 @@ describe HttpApi do
                :system => "true" }
       users = Users.new
       response = users.create(user)
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "fetch users" do
       users = Users.new
-      users.all.should_not be_empty
+      expect(users.all).to_not be_empty
     end
   end
 
   describe "attachments" do
-    it "fetches a list of attachments" do
-      card_number = 132
-      response = mingle.attachments(card_number)
-      attachments = response['attachments']
-
-      attachments.should_not be_empty
-      attachments.size.should == 3
-    end
-
-    it "fetches the first attachment from url" do
-      card_number = 132
-      response = mingle.attachments(card_number)
-      attachments = response['attachments']
-
-      response = mingle.attachment(attachments.last["url"])
-      image_file = File.open("attachment_received.jpg", "w+")
-      image_file << response
-      image_file.close
-
-      File.stat("attachment_received.jpg").should_not be_zero
+    it "attaches a file to a card" do
+      card_number = 727
+      response = Attachments.new.attach(card_number, "README.md")
+      expect(response['location']).to match(/attachments/)
     end
   end
 

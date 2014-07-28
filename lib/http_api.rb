@@ -1,7 +1,7 @@
 module HttpApi
 
-  include HTTParty
-
+  include HTTMultiParty
+  
   def setup
     config = YAML.load(File.read("./config.yml")).first
     uri = "#{config['host']}/api/v2/projects/#{config['project']}"

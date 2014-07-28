@@ -1,4 +1,4 @@
-require 'httparty'
+require 'httmultiparty'
 require 'crack'
 require 'rexml/document'
 
@@ -7,3 +7,4 @@ require 'cards'
 require 'murmurs'
 require 'users'
 require 'projects'
+require 'attachments'

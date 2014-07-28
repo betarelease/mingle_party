@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec"
   s.add_runtime_dependency "crack"
-  s.add_runtime_dependency "httparty"
+  s.add_runtime_dependency "httmultiparty"
 end
